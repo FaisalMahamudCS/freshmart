@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  cartItems CartItem[]
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Category {
+  id    Int          @id @default(autoincrement())
+  name  String       @unique
+  items GroceryItem[]
+
+  @@map("categories")
+}
+
+model GroceryItem {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal     @db.Decimal(10, 2)
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  inventory   Inventory?
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@map("grocery_items")
+}
+
+model Inventory {
+  id            Int         @id @default(autoincrement())
+  stockLevel    Int         @default(0)
+  item          GroceryItem @relation(fields: [groceryItemId], references: [id])
+  groceryItemId Int         @unique
+
+  @@map("inventory")
+}
+
+model CartItem {
+  id            Int         @id @default(autoincrement())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String
+  item          GroceryItem @relation(fields: [groceryItemId], references: [id])
+  groceryItemId Int
+  quantity      Int         @default(1)
+
+  @@map("cart_items")
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  user       User        @relation(fields: [userId], references: [id])
+  userId     String
+  totalPrice Decimal     @db.Decimal(10, 2)
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id             Int         @id @default(autoincrement())
+  order          Order       @relation(fields: [orderId], references: [id])
+  orderId        String
+  item           GroceryItem @relation(fields: [groceryItemId], references: [id])
+  groceryItemId  Int
+  quantity       Int
+  priceAtBooking Decimal     @db.Decimal(10, 2)
+
+  @@map("order_items")
+}
