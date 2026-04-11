@@ -1,0 +1,14 @@
+node_modules
+dist
+frontend
+.git
+.gitignore
+.prettierrc
+Dockerfile
+docker-compose.yml
+README.md
+nest-cli.json
+tsconfig.build.json
+tsconfig.json
+.agent
+npm-debug.log

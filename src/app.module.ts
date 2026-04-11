@@ -20,12 +20,18 @@ import { LoggingInterceptor } from './modules/common/interceptors/logging.interc
     PrismaModule,
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          host: configService.get<string>('REDIS_HOST'),
-          port: configService.get<number>('REDIS_PORT'),
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const url = configService.get<string>('REDIS_URL');
+        if (url) {
+          return { connection: { url } };
+        }
+        return {
+          connection: {
+            host: configService.get<string>('REDIS_HOST') || 'localhost',
+            port: configService.get<number>('REDIS_PORT') || 6379,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
     ThrottlerModule.forRoot([{

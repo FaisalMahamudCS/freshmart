@@ -1,28 +1,32 @@
-# Base image
-FROM node:20-alpine AS development
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY prisma ./prisma/
 
+# Install dependencies and generate Prisma client
 RUN npm install
+RUN npx prisma generate
 
 COPY . .
 
+# Build the application
 RUN npm run build
 
-# Production image
+# Stage 2: Production
 FROM node:20-alpine AS production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/prisma ./prisma
 
-RUN npm install --only=production
+EXPOSE 3000
 
-COPY --from=development /usr/src/app/dist ./dist
+ENV NODE_ENV=production
 
-CMD ["node", "dist/main"]
+CMD ["npm", "run", "start:prod"]
