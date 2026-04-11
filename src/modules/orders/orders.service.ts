@@ -23,6 +23,7 @@ export class OrdersService {
     let totalPrice = 0;
     for (const item of cartItems) {
       const groceryItem = item.item as any;
+      console.log("grocery",groceryItem)
       if (!groceryItem.inventory || groceryItem.inventory.stockLevel < item.quantity) {
         throw new BadRequestException(`Insufficient stock for ${groceryItem.name}`);
       }

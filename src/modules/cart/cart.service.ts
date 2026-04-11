@@ -44,7 +44,7 @@ export class CartService {
       where: { userId },
       include: {
         item: {
-          include: { category: true },
+          include: { category: true,inventory:true },
         },
       },
     });
