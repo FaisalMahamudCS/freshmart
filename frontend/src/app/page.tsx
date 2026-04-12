@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import { ShoppingBag, Leaf, Truck, Shield, Star } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import ProductGrid from "@/components/shop/ProductGrid";
+import { getCategoryEmoji, getCategoryImage } from "@/lib/utils";
 
 const trustFeatures = [
   { icon: Truck, label: "Fast Delivery", desc: "Same day in your area", color: "text-emerald-600", bg: "bg-emerald-50" },
@@ -14,12 +16,12 @@ const trustFeatures = [
 ];
 
 const categories = [
-  { name: "Vegetables", emoji: "🥦", color: "from-emerald-400 to-green-500" },
-  { name: "Fruits", emoji: "🍎", color: "from-red-400 to-rose-500" },
-  { name: "Dairy", emoji: "🥛", color: "from-blue-400 to-sky-500" },
-  { name: "Bakery", emoji: "🍞", color: "from-amber-400 to-orange-500" },
-  { name: "Seafood", emoji: "🐟", color: "from-cyan-400 to-teal-500" },
-  { name: "Grains", emoji: "🌾", color: "from-yellow-400 to-amber-500" },
+  { name: "Vegetables", color: "from-emerald-400 to-green-500" },
+  { name: "Fruits", color: "from-red-400 to-rose-500" },
+  { name: "Dairy", color: "from-blue-400 to-sky-500" },
+  { name: "Bakery", color: "from-amber-400 to-orange-500" },
+  { name: "Seafood", color: "from-cyan-400 to-teal-500" },
+  { name: "Grains", color: "from-yellow-400 to-amber-500" },
 ];
 
 const containerVariants = {
@@ -199,17 +201,34 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="grid grid-cols-3 md:grid-cols-6 gap-4"
           >
-            {categories.map((cat) => (
-              <motion.div
-                key={cat.name}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -2 }}
-                className={`flex flex-col items-center gap-3 p-5 rounded-2xl bg-gradient-to-br ${cat.color} cursor-pointer shadow-md hover:shadow-xl transition-all duration-200`}
-              >
-                <span className="text-3xl">{cat.emoji}</span>
-                <span className="text-white text-xs font-semibold text-center">{cat.name}</span>
-              </motion.div>
-            ))}
+            {categories.map((cat) => {
+              const img = getCategoryImage(cat.name);
+              const emoji = getCategoryEmoji(cat.name);
+              return (
+                <motion.div
+                  key={cat.name}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className={`group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-gradient-to-br ${cat.color} cursor-pointer shadow-md hover:shadow-xl transition-all duration-200 aspect-square overflow-hidden`}
+                >
+                  {img ? (
+                    <Image
+                      src={img}
+                      alt={cat.name}
+                      fill
+                      className="object-cover opacity-30 group-hover:opacity-50 transition-opacity"
+                    />
+                  ) : (
+                    <span className="text-3xl z-10">{emoji}</span>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent z-10">
+                    <p className="text-white text-sm font-bold text-center drop-shadow-lg">
+                      {cat.name}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>

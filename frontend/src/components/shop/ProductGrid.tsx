@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter, X, Loader2 } from "lucide-react";
 import { groceryApi } from "@/lib/api";
 import ProductCard from "@/components/ui/ProductCard";
+import { getCategoryEmoji } from "@/lib/utils";
 
 interface GroceryItem {
   id: number;
@@ -121,7 +122,7 @@ export default function ProductGrid() {
                   : "bg-white border border-slate-200 text-slate-700 hover:border-emerald-300"
               }`}
             >
-              {cat.name}
+              {cat.name} {getCategoryEmoji(cat.name)}
             </button>
           ))}
         </div>
@@ -131,7 +132,7 @@ export default function ProductGrid() {
       <p className="text-sm text-slate-500 mb-5">
         Showing <span className="font-semibold text-slate-700">{filtered.length}</span> items
         {selectedCategory && categories.find(c => c.id === selectedCategory) && (
-          <> in <span className="font-semibold text-emerald-600">{categories.find(c => c.id === selectedCategory)?.name}</span></>
+          <> in <span className="font-semibold text-emerald-600">{categories.find(c => c.id === selectedCategory)?.name} {getCategoryEmoji(categories.find(c => c.id === selectedCategory)?.name || "")}</span></>
         )}
       </p>
 
@@ -142,9 +143,9 @@ export default function ProductGrid() {
           animate={{ opacity: 1 }}
           className="text-center py-20"
         >
-          <div className="text-6xl mb-4">🔍</div>
-          <p className="text-slate-600 font-medium text-lg">No items found</p>
-          <p className="text-slate-400 text-sm mt-1">Try adjusting your search or filters</p>
+          <div className="text-6xl mb-4">🛒</div>
+          <p className="text-slate-600 font-medium text-lg">No items found in this section</p>
+          <p className="text-slate-400 text-sm mt-1">Try selecting a different category or clearing your search.</p>
         </motion.div>
       ) : (
         <motion.div
