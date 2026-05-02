@@ -24,7 +24,7 @@ Orders are processed asynchronously using **BullMQ**.
 - **Decision**: Separates order booking from inventory deduction.
 - **Benefit**: High availability during peak traffic; no lost orders if the main server is busy.
 
-### 3. Modern Frontend (Next.js 14 + Zustand)
+### 3. Modern Frontend (Next.js 16 + Zustand)
 Built with **Next.js 14** using the App Router for optimal performance.
 - **Decision**: Uses **Zustand** for lightweight, high-performance state management (Cart & Auth).
 - **Styling**: Vanilla Tailwind CSS + Framer Motion for sophisticated animations.
@@ -89,6 +89,4 @@ The application is architected for a distributed cloud environment:
 
 ---
 
-<p align="center">
-  Built with ❤️ and 🤖 AI Design Intelligence.
-</p>
+
